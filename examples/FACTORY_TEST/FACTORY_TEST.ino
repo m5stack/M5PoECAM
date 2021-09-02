@@ -1,22 +1,16 @@
 /*
     Description: Connect PoECAM to Ethernet, check the serial port output log to get the preview URL address "192.168.xxx.xxx/stream"
+    Long press the button on the right side of the fuselage to switch between UART/PoE mode.
     Please install library before compiling:  
-    M5GFX: https://github.com/m5stack/M5GFX
     Ethernet Lib download Link: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/lib/Ethernet.zip
     After downloaded unzip the lib zip file to the Arduino Lib path
 */
-
 
 #include <WiFi.h>
 #include "esp_task_wdt.h"
 #include "esp_camera.h"
 #include "PoE_CAM.h"
 #include <esp_heap_caps.h>
-
-#include <M5UnitOLED.h>
-M5UnitOLED display;
-M5Canvas canvas(&display);
-bool factory_test_mode = false;
 
 char wifi_ssid[36];
 char wifi_pwd[36];
@@ -203,27 +197,16 @@ void startW5500TimingServer() {
   }
 }
 
-void wifi_scan(void);
-
-bool modeFlag = false;
-
 void btn_switch_mode_task(void *arg) {
   while(1){
     if (!digitalRead(37))
     {
       vTaskDelay(pdMS_TO_TICKS(500));
-      if(!digitalRead(37)) {
-          while (!digitalRead(37))
-          {
-            if (modeFlag) {
-              UpdateDeviceMode(kUart);
-              Serial.println("Switch to UART MODE");
-            }else {
-              UpdateDeviceMode(kPOE);
-              Serial.println("Switch to PoE MODE");
-            }
-            modeFlag = !modeFlag;
-            vTaskDelay(pdMS_TO_TICKS(1000));
+      if(!digitalRead(37)) { 
+          if(GetDeviceMode() == kUart){
+            UpdateDeviceMode(kPOE);
+          }else{
+            UpdateDeviceMode(kUart);
           }
           SaveTimerCamConfig();
           vTaskDelay(pdMS_TO_TICKS(1000));
@@ -237,48 +220,14 @@ void btn_switch_mode_task(void *arg) {
 void setup() {
   Serial.begin(115200);
 
-
   pinMode(37, INPUT);
   pinMode(0, OUTPUT);
-  digitalWrite(0, 1);
+  digitalWrite(0, 0);
 
   delay(100);
 
-  if (!digitalRead(37))
-  {
-    delay(500);
-    if (!digitalRead(37))
-    {
-      factory_test_mode = true;
-    }
-  }
-
-
-  if (factory_test_mode)
-  {
-    display.init(Ext_PIN_2, Ext_PIN_1);
-    display.setRotation(3);
-    canvas.setColorDepth(1); // mono color
-    canvas.setFont(&fonts::efontCN_12);
-    canvas.setTextWrap(true);
-    canvas.setTextSize(1);
-    canvas.createSprite(display.width(), display.height());
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-
-    wifi_scan();
-
-    canvas.fillSprite(0x0);
-    canvas.setCursor(0, 0);
-    canvas.printf("WiFi Scan done\r\n");
-    canvas.pushSprite(0, 0);
-    delay(2000);
-  }
-  else {
-    Serial.println("UART INIT");
-    uart_init(Ext_PIN_1, Ext_PIN_2); 
-  }
-
+  Serial.println("UART INIT");
+  uart_init(Ext_PIN_1, Ext_PIN_2); 
 
   camera_config_t config;
   config.pin_pwdn = CAM_PIN_PWDN,
@@ -309,26 +258,12 @@ void setup() {
 
   if (err) 
   {
-    if (factory_test_mode)
-    {
-      canvas.setCursor(0, 0);
-      canvas.printf("Camera init failed\r\n");
-      canvas.pushSprite(0, 0);
-    }
-
     Serial.printf("Camera init failed\r\n");
     for (;;) {
       delay(1);
     }
   }
 
-  if (factory_test_mode)
-  {
-    canvas.fillSprite(0x0);
-    canvas.setCursor(0, 0);
-    canvas.printf("Camera init success\r\n");
-    canvas.pushSprite(0, 0);
-  }
   Serial.printf("Cam Init Success\r\n");
   delay(100);
 
@@ -336,13 +271,6 @@ void setup() {
   InitTimerCamConfig();
   InitCamFun();
   init_finish = true;
-
-  if (factory_test_mode)
-  {
-    w5500Init();
-    w5500ImageLoop();
-  }
-
 
   xTaskCreatePinnedToCore(btn_switch_mode_task, "btn_switch_mode_task", 4 * 1024, NULL, 2, NULL, 0);
 
@@ -368,42 +296,6 @@ void setup() {
   }
 }
 
-
 void loop() {
   delay(100);
-}
-
-
-void wifi_scan(void)
-{
-  int n = WiFi.scanNetworks();
-  Serial.println("scan done");
-  if (n == 0) {
-      canvas.fillSprite(0x0);
-      canvas.setCursor(0, 0);
-      canvas.printf("no wifi found\r\n");
-      canvas.pushSprite(0, 0);
-  } else {
-      Serial.print(n);
-      Serial.println("networks found");
-      for (int i = 0; i < ( n > 5 ? 5: n); ++i) {
-          // Print SSID and RSSI for each network found
-          if ( canvas.getCursorY() > 40){
-            canvas.fillSprite(0x0);
-            canvas.setCursor(0, 0);
-            canvas.pushSprite(0, 0);
-
-          }else{
-            canvas.print(i + 1);
-            canvas.print(": ");
-            canvas.print(WiFi.SSID(i));
-            canvas.print(" (");
-            canvas.print(WiFi.RSSI(i));
-            canvas.print(")");
-            canvas.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
-            canvas.pushSprite(0, 0);
-          }
-          delay(1000);
-      }
-  }
 }

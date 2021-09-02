@@ -3,10 +3,6 @@
 #include "http_parser.h"
 #include "esp_camera.h"
 #include "camera_index.h"
-#include <M5UnitOLED.h>
-
-extern M5Canvas canvas;
-extern bool factory_test_mode;
 
 #define STEAM_URL  "/stream"
 #define TEST_URL "/"
@@ -62,13 +58,13 @@ void jpegStream(EthernetClient* client) {
     esp_camera_fb_return(fb);
     fb = NULL;
 
-    if (digitalRead(37))
-    {
-      digitalWrite(0, 1);
-    }
-    else{
-      digitalWrite(0, 0);
-    }
+    // if (digitalRead(37))
+    // {
+    //   digitalWrite(0, 1);
+    // }
+    // else{
+    //   digitalWrite(0, 0);
+    // }
   }
 
 client_exit:
@@ -138,13 +134,6 @@ int on_url(http_parser* parser, const char* at, size_t length) {
 void w5500ImageTask(void *arg) {
   (void)arg;
   server.begin();
-  if (factory_test_mode)
-  {
-    canvas.fillSprite(0x0);
-    canvas.setCursor(0, 0);
-    canvas.printf("Open \r\n%s%s", poe_addr.toString().c_str(), STEAM_URL);
-    canvas.pushSprite(0, 0);
-  }
   Serial.printf("Poe Listening url: \r\n");
   Serial.printf("%s%s -> image stream \r\n", poe_addr.toString().c_str(), STEAM_URL);
 
@@ -319,24 +308,11 @@ void w5500Init() {
   for (;;) {
     auto link = Ethernet.linkStatus();
     if (link == Unknown) {
-      if (factory_test_mode)
-      {
-        canvas.fillSprite(0x0);
-        canvas.setCursor(0, 0);
-        canvas.printf("W5500 error\r\n");
-        canvas.pushSprite(0, 0);
-      }
+
       Serial.printf("W5500 maybe error\r\n");
     } else if (link == LinkON) {
       break ;
     } else {
-      if (factory_test_mode)
-      {
-        canvas.fillSprite(0x0);
-        canvas.setCursor(0, 0);
-        canvas.printf("Waitting connect to \r\nEthernet\r\n");
-        canvas.pushSprite(0, 0);
-      }
       Serial.printf("Poe wait connect\r\n");
     }
     delay(500);

@@ -15,10 +15,13 @@ void InitTimerCamConfig() {
     nvs_handle handle;
     esp_err_t err;
     err = nvs_open(CAM_NAMESPACE, NVS_READWRITE, &handle);
-    size_t lenght;
-    err = nvs_get_blob(handle, CAM_CONFIG_KEY, &timer_cam_config, &lenght);
+    TimerCamConfig_t config;
+    size_t lenght = sizeof(TimerCamConfig_t);
+    err = nvs_get_blob(handle, CAM_CONFIG_KEY, &config, &lenght);
     // nvs not found device config
-    if (err != ESP_OK && lenght != sizeof(TimerCamConfig_t)) { 
+    if (err == ESP_OK) { 
+        memcpy(&timer_cam_config, &config, sizeof(config));
+    }else {
         timer_cam_config.mode = kPOE;
         timer_cam_config.wifi_pwd[0] = '\0';
         timer_cam_config.wifi_ssid[0] = '\0';
