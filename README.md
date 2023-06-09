@@ -2,7 +2,7 @@
 
 English | [中文](README_cn.md)
 
-<img src="https://static-cdn.m5stack.com/resource/docs/static/assets/img/product_pics/unit/poe_cam/poe_cam_01.webp" alt="M5Core2_P1" width="350" height="350">
+<img src="https://static-cdn.m5stack.com/resource/docs/static/assets/img/product_pics/unit/poe_cam/poe_cam_01.webp" alt="M5Core2_P1" width="350" height="350"><img src="https://static-cdn.m5stack.com/resource/docs/products/unit/M5PoECAM-W/img-0e65978b-b66f-41ea-a94f-e0be885ce076.webp" alt="M5Core2_P1" width="350" height="350">
 
 * **For the Detailed documentation of PoECAM, Please [Click here](https://docs.m5stack.com/en/unit/poe_cam)**
 

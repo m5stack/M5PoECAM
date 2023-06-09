@@ -3,7 +3,7 @@
 中文 | [English](README_cn.md)
 
 
-<img src="https://static-cdn.m5stack.com/resource/docs/static/assets/img/product_pics/unit/poe_cam/poe_cam_01.webp" alt="M5Core2_P1" width="350" height="350">
+<img src="https://static-cdn.m5stack.com/resource/docs/static/assets/img/product_pics/unit/poe_cam/poe_cam_01.webp" alt="M5Core2_P1" width="350" height="350"><img src="https://static-cdn.m5stack.com/resource/docs/products/unit/M5PoECAM-W/img-0e65978b-b66f-41ea-a94f-e0be885ce076.webp" alt="M5Core2_P1" width="350" height="350">
 
 * **如果查看 PoECAM 的详细介绍文档，[点击这里](https://docs.m5stack.com/zh_CN/unit/poe_cam)**
 
