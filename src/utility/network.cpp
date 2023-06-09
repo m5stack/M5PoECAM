@@ -13,7 +13,8 @@
 #define MAX_STA_CONN       1
 
 static EventGroupHandle_t wifi_event_group = NULL;
-static ip4_addr_t ip_addr;
+// static ip4_addr_t ip_addr; // For platform = espressif32@ ^3.5.0
+static esp_ip4_addr_t ip_addr; // For platform = espressif32@ ^5.1.0
 
 const int CONNECTED_BIT = BIT0;
 const int CONNECTED_FAIL_BIT = BIT1;
@@ -32,7 +33,8 @@ static esp_err_t event_handler(void* ctx, system_event_t* event) {
             break;
 
         case SYSTEM_EVENT_STA_GOT_IP:
-            Serial.printf("got ip:%s\r\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+            // Serial.printf("got ip:%s\r\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+            Serial.printf("got ip:%s\r\n", ip4addr_ntoa((ip4_addr_t *)&event->event_info.got_ip.ip_info.ip));
             ip_addr = event->event_info.got_ip.ip_info.ip;
             xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
             xEventGroupClearBits(wifi_event_group, CONNECTED_FAIL_BIT);
@@ -104,7 +106,8 @@ void wifi_sta_connect(const char* ssid, const char* pwd) {
 
     ESP_LOGI(TAG, "Setting WiFi configuration SSID %s...", wifi_config.sta.ssid);
     esp_wifi_stop();
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+    // ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_set_config((wifi_interface_t)ESP_IF_WIFI_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 }
 
@@ -161,7 +164,8 @@ void wifi_init_ap(const char *ssid, const char *pwd) {
     if (strlen(pwd) == 0) {
         wifi_config.ap.authmode = WIFI_AUTH_OPEN;
     }
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config));
+    // ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_set_config((wifi_interface_t)ESP_IF_WIFI_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 
     ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s", ssid, pwd);
