@@ -1,5 +1,5 @@
 {
-  "name": "PoE_CAM",
+  "name": "M5PoECAM",
   "description": "Library for M5Stack PoE-CAM development kit",
   "keywords": "PoE CAM W5500",
   "authors": {
@@ -8,10 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/m5stack/PoE_CAM.git"
+    "url": "https://github.com/m5stack/M5PoECAM.git"
   },
-  "version": "0.0.2",
+  "dependencies": [
+    {
+      "M5-Ethernet": "*"
+    }
+  ],
+  "version": "1.0.0",
   "frameworks": "arduino",
   "platforms": "espressif32"
 }
-  
