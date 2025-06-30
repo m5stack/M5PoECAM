@@ -2,6 +2,7 @@
 #define _M5_TIMER_CAM_CAMERA_H_
 
 #include "esp_camera.h"
+#include "Arduino.h"
 
 #define PWDN_GPIO_NUM  -1
 #define RESET_GPIO_NUM 15

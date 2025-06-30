@@ -29,10 +29,12 @@ static camera_config_t camera_config = {
     .fb_count      = 2,
     .fb_location   = CAMERA_FB_IN_PSRAM,
     .grab_mode     = CAMERA_GRAB_LATEST,
-    .sccb_i2c_port = 0,
+    .sccb_i2c_port = -1,
 };
 
 bool Camera_Class::begin() {
+    pinMode(SIOD_GPIO_NUM, PULLUP);
+    pinMode(SIOC_GPIO_NUM, PULLUP);
     esp_err_t err = esp_camera_init(&camera_config);
     if (err != ESP_OK) {
         return false;

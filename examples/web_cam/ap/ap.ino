@@ -99,7 +99,7 @@ static void jpegStream(WiFiClient* client) {
             int32_t to_sends    = PoECAM.Camera.fb->len;
             int32_t now_sends   = 0;
             uint8_t* out_buf    = PoECAM.Camera.fb->buf;
-            uint32_t packet_len = 8 * 1024;
+            uint32_t packet_len = 2048;
             while (to_sends > 0) {
                 now_sends = to_sends > packet_len ? packet_len : to_sends;
                 if (client->write(out_buf, now_sends) == 0) {
